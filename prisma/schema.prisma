@@ -1,0 +1,102 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Client {
+  id                 String               @id @default(cuid())
+  name               String               @unique
+  shortPositions     ShortPosition[]
+  ownership          Ownership[]
+  researchCoverage   ResearchCoverage[]
+  landingPageTraffic LandingPageTraffic[]
+  webinarPerformance WebinarPerformance[]
+  emailPerformance   EmailPerformance[]
+  stats              Stats[]
+  feedback           Feedback[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+}
+
+model ShortPosition {
+  id                String   @id @default(cuid())
+  client            Client   @relation(fields: [clientId], references: [id])
+  clientId          String
+  date              DateTime
+  shortVolume       Int
+  shortExemptVolume Int
+  totalVolume       Int
+}
+
+model Ownership {
+  id          String    @id @default(cuid())
+  client      Client    @relation(fields: [clientId], references: [id])
+  clientId    String
+  institution String
+  shares      Int
+  change      String
+}
+
+model ResearchCoverage {
+  id          String    @id @default(cuid())
+  client      Client    @relation(fields: [clientId], references: [id])
+  clientId    String
+  date        DateTime
+  firm        String
+  rating      String
+  priceTarget Float
+}
+
+model LandingPageTraffic {
+  id             String    @id @default(cuid())
+  client         Client    @relation(fields: [clientId], references: [id])
+  clientId       String
+  date           DateTime
+  pageViews      Int
+  uniqueVisitors Int
+  conversionRate Float
+}
+
+model WebinarPerformance {
+  id            String    @id @default(cuid())
+  client        Client    @relation(fields: [clientId], references: [id])
+  clientId      String
+  date          DateTime
+  registrations  Int
+  attendance     Int
+  conversionRate Float
+}
+
+model EmailPerformance {
+  id            String    @id @default(cuid())
+  client        Client    @relation(fields: [clientId], references: [id])
+  clientId      String
+  date          DateTime
+  sends         Int
+  opens         Int
+  clicks        Int
+  conversionRate Float
+}
+
+model Stats {
+  id        String    @id @default(cuid())
+  client    Client    @relation(fields: [clientId], references: [id])
+  clientId  String
+  title     String
+  value     String
+}
+
+model Feedback {
+  id        String    @id @default(cuid())
+  client    Client    @relation(fields: [clientId], references: [id])
+  clientId  String
+  comment   String
+  rating    Int
+  createdAt DateTime  @default(now())
+}
