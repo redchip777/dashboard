@@ -29,12 +29,17 @@ async function testConnections() {
 
   try {
     console.log('\nTesting Google Analytics API...');
-    const endDate = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
-    const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 30 days ago
+    const startDate = '7daysAgo';
+    const endDate = 'today';
     const gaData = await getGoogleAnalyticsData(startDate, endDate);
-    console.log('Google Analytics API connection successful:', gaData);
+    console.log('Google Analytics API connection successful');
+    console.log('Data received:', JSON.stringify(gaData, null, 2));
   } catch (error) {
     console.error('Google Analytics API connection failed:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
   }
 
   console.log('\nSkipping Instagram API test (access token not available)');
@@ -44,4 +49,4 @@ async function testConnections() {
   console.log('\nAPI tests completed.');
 }
 
-testConnections().catch(console.error);
+testConnections();

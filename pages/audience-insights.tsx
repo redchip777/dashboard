@@ -6,7 +6,7 @@ import StatCard from '../components/StatCard';
 import DemographicsCard from '../components/DemographicsCard';
 import AgeGroupCard from '../components/AgeGroupCard';
 import ImageGrid from '../components/ImageGrid';
-import AudienceGrowthChart from '../components/AudienceGrowthChart';
+import DynamicAudienceGrowthChart from '../components/DynamicAudienceGrowthChart';
 import { FaMale, FaFemale } from 'react-icons/fa'; // Using react-icons for gender icons
 
 const AudienceInsights: NextPage = () => {
@@ -233,7 +233,7 @@ const AudienceInsights: NextPage = () => {
                   </div>
 
                   {/* New Users Bar Chart */}
-                  <AudienceGrowthChart
+                  <DynamicAudienceGrowthChart
                     data={[
                       { date: 'June 1', value: 90 },
                       { date: 'June 7', value: 60 },

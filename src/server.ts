@@ -2,12 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import clientsRouter from './routes/clients';
 import dashboardRouter from './routes/dashboard';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000'
+}));
 app.use(express.json());
 
 // Routes
@@ -25,4 +29,3 @@ app.listen(port, () => {
 });
 
 export default app;
-

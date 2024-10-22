@@ -8,6 +8,31 @@ import Intercom from '@intercom/messenger-js-sdk';
 import { ThemeProvider } from 'next-themes';
 import Script from 'next/script';
 
+// Import Chart.js and necessary components
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 // **Font Configuration**
 const inter = Inter({
   subsets: ['latin'],
@@ -27,7 +52,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     Intercom({
       app_id: 'tjz0mvmr',
     });
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, []);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

@@ -34,10 +34,20 @@ api.interceptors.response.use((response) => {
 
 export const fetchDashboardData = async () => {
   try {
+    console.log('Fetching dashboard data from:', `${api.defaults.baseURL}/api/dashboard`);
     const response = await api.get('/api/dashboard');
+    console.log('Dashboard data received:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        headers: error.response?.headers,
+      });
+    }
     throw error;
   }
 };
@@ -64,6 +74,16 @@ export const fetchGoogleAnalyticsData = async (startDate: string, endDate: strin
   }
 };
 
-// Add more API call functions as needed
+export const fetchClientGoogleAnalyticsData = async (clientId: string, startDate: string, endDate: string) => {
+  try {
+    const response = await api.get(`/api/clients/${clientId}/google-analytics`, {
+      params: { startDate, endDate },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching Google Analytics data for client ${clientId}:`, error);
+    throw error;
+  }
+};
 
 export default api;

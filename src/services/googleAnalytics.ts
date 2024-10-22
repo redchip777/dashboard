@@ -1,18 +1,26 @@
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
-import { join } from 'path';
-import { readFileSync } from 'fs';
+import dotenv from 'dotenv';
 
-const keyFilePath = join(__dirname, '..', '..', '..', 'galileo-secrets', 'google-analytics-key.json');
+dotenv.config();
 
 let analyticsDataClient: BetaAnalyticsDataClient | null = null;
 
-try {
-  const keyFileContent = readFileSync(keyFilePath, 'utf8');
-  const keyData = JSON.parse(keyFileContent);
+console.log('GOOGLE_CLIENT_EMAIL:', process.env.GOOGLE_CLIENT_EMAIL);
+console.log('GOOGLE_PRIVATE_KEY is set:', !!process.env.GOOGLE_PRIVATE_KEY);
+console.log('GA_PROPERTY_ID:', process.env.GA_PROPERTY_ID);
 
+try {
+  const credentials = {
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  };
+  
+  console.log('Credentials object:', JSON.stringify(credentials, null, 2));
+  
   analyticsDataClient = new BetaAnalyticsDataClient({
-    credentials: keyData,
+    credentials: credentials,
   });
+  console.log('Google Analytics client initialized successfully');
 } catch (error) {
   console.error('Error initializing Google Analytics client:', error);
 }
@@ -27,20 +35,26 @@ export const getGoogleAnalyticsData = async (startDate: string, endDate: string)
     throw new Error('GA_PROPERTY_ID is not set in environment variables');
   }
 
-  const [response] = await analyticsDataClient.runReport({
-    property: `properties/${propertyId}`,
-    dateRanges: [
-      {
-        startDate,
-        endDate,
-      },
-    ],
-    metrics: [
-      {
-        name: 'activeUsers',
-      },
-    ],
-  });
-
-  return response;
+  try {
+    console.log(`Fetching Google Analytics data for property ID ${propertyId} from ${startDate} to ${endDate}`);
+    const [response] = await analyticsDataClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [{ startDate, endDate }],
+      metrics: [
+        { name: 'activeUsers' },
+        { name: 'sessions' },
+        { name: 'bounceRate' },
+        { name: 'averageSessionDuration' }
+      ],
+    });
+    console.log('Google Analytics data fetched successfully:', JSON.stringify(response, null, 2));
+    return response;
+  } catch (error) {
+    console.error('Error fetching Google Analytics data:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    throw error;
+  }
 };
